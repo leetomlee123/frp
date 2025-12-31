@@ -68,7 +68,6 @@ require (
 	github.com/vishvananda/netns v0.0.4 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
-	golang.org/x/mobile v0.0.0-20251209145715-2553ed8ce294 // indirect
 	golang.org/x/mod v0.31.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
