@@ -17,8 +17,9 @@ package mobile
 import (
 	_ "github.com/fatedier/frp/assets/frpc"
 	"github.com/fatedier/frp/cmd/frpc/sub"
+	_ "golang.org/x/mobile/bind"
 )
 
 func Run(port, name, ip string) {
-	sub.Execute(port,name,ip)
+	sub.Execute(port, name, ip)
 }
