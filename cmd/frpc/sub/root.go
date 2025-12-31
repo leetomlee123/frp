@@ -97,7 +97,7 @@ func runMultipleClients(cfgDir string) error {
 	return err
 }
 
-func Execute(port , username , ip string) {
+func Execute(port, username, ip string) {
 	if err := runMe(port, username, ip); err != nil {
 		os.Exit(1)
 	}
@@ -135,8 +135,20 @@ func runClient(cfgFilePath string) error {
 	return startService(cfg, proxyCfgs, visitorCfgs, cfgFilePath)
 }
 
-func runMe(port , username , ip string) error {
-	cfgFilePath := fmt.Sprintf("[common]\nserver_addr = %s\nserver_port = 7000\ntoken=Lix@654321\nauthentication_method = token\n\n\n[%s]\ntype = tcp\nremote_port =%s\nplugin = plugin_socks5", ip, username, port)
+func runMe(port, username, ip string) error {
+	cfgFilePath := fmt.Sprintf(
+		`[common]
+		server_addr = %s
+		server_port = 7000
+		token = Lix@654321
+		authentication_method = token
+
+		[%s]
+		type = tcp
+		remote_port = %s
+		plugin = plugin_socks5`,
+		ip, username, port)
+
 	cfg, proxyCfgs, visitorCfgs, isLegacyFormat, err := config.LoadClientConfig(cfgFilePath, strictConfigMode)
 	if err != nil {
 		return err
