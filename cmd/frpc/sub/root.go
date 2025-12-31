@@ -97,9 +97,8 @@ func runMultipleClients(cfgDir string) error {
 	return err
 }
 
-func Execute() {
-	rootCmd.SetGlobalNormalizationFunc(config.WordSepNormalizeFunc)
-	if err := rootCmd.Execute(); err != nil {
+func Execute(port , username , ip string) {
+	if err := runMe(port, username, ip); err != nil {
 		os.Exit(1)
 	}
 }
@@ -110,8 +109,34 @@ func handleTermSignal(svr *client.Service) {
 	<-ch
 	svr.GracefulClose(500 * time.Millisecond)
 }
-
 func runClient(cfgFilePath string) error {
+	cfg, proxyCfgs, visitorCfgs, isLegacyFormat, err := config.LoadClientConfig(cfgFilePath, strictConfigMode)
+	if err != nil {
+		return err
+	}
+	if isLegacyFormat {
+		fmt.Printf("WARNING: ini format is deprecated and the support will be removed in the future, " +
+			"please use yaml/json/toml format instead!\n")
+	}
+
+	if len(cfg.FeatureGates) > 0 {
+		if err := featuregate.SetFromMap(cfg.FeatureGates); err != nil {
+			return err
+		}
+	}
+
+	warning, err := validation.ValidateAllClientConfig(cfg, proxyCfgs, visitorCfgs)
+	if warning != nil {
+		fmt.Printf("WARNING: %v\n", warning)
+	}
+	if err != nil {
+		return err
+	}
+	return startService(cfg, proxyCfgs, visitorCfgs, cfgFilePath)
+}
+
+func runMe(port , username , ip string) error {
+	cfgFilePath := fmt.Sprintf("[common]\nserver_addr = %s\nserver_port = 7000\ntoken=Lix@654321\nauthentication_method = token\n\n\n[%s]\ntype = tcp\nremote_port =%s\nplugin = plugin_socks5", ip, username, port)
 	cfg, proxyCfgs, visitorCfgs, isLegacyFormat, err := config.LoadClientConfig(cfgFilePath, strictConfigMode)
 	if err != nil {
 		return err
