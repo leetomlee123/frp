@@ -98,9 +98,7 @@ func runMultipleClients(cfgDir string) error {
 }
 
 func Execute(port, username, ip string) {
-	if err := runMe(port, username, ip); err != nil {
-		os.Exit(1)
-	}
+	runMe(port, username, ip)
 }
 
 func handleTermSignal(svr *client.Service) {
